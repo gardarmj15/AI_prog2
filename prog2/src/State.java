@@ -1,18 +1,15 @@
-import Helpers.Point2D;
+import Helpers.PawnPosition;
 
 import java.util.ArrayList;
 
 public class State
 {
-    private ArrayList<Point2D> whitePawns;
-    private ArrayList<Point2D> blackPawns;
+    private ArrayList<PawnPosition> pawns;
     private String role;
 
     public State()
     {
-        whitePawns = new ArrayList<>();
-        blackPawns = new ArrayList<>();
-        role = "white";
+        pawns = new ArrayList<>();
     }
 
     public void addToLists(int w, int h)
@@ -21,29 +18,32 @@ public class State
         {
             for(int y = 1; y <= 2; y++)
             {
-                whitePawns.add(new Point2D(x,y));
+                pawns.add(new PawnPosition(x,y,true));
             }
         }
         for(int x = 1; x <= w; x++)
         {
             for(int y = h; y > w; y--)
             {
-                blackPawns.add(new Point2D(x,y));
+                pawns.add(new PawnPosition(x,y,false));
             }
         }
     }
-    void moveForward(int x, int y){
+    void moveForward(int x, int y, boolean white){
         System.out.println("move forward");
-        for(Point2D p : blackPawns){
-            if(p.getX() == x && p.getY()== y){
-                p.setY(y + 1);
+        for(PawnPosition p : pawns){
+            if(p.getX() == x && p.getY()== y && p.isWhite()){
+                p = new PawnPosition(x, y + 1, white);
+            }
+            else if(p.getX() == x && p.getY()== y && !p.isWhite()){
+                p = new PawnPosition(x, y + 1, white);
             }
         }
     }
     void moveDiagonally(int x, int y, Boolean right){
         if(right){
             System.out.println("move right");
-            for(Point2D p : blackPawns){
+            for(PawnPosition p : pawns){
                 if(p.getX() == x && p.getY()== y){
                     p.setY(y - 1);
                     p.setX(x - 1);
@@ -52,7 +52,7 @@ public class State
         }
         else{
             System.out.println("move left");
-            for(Point2D p : blackPawns){
+            for(PawnPosition p : pawns){
                 if(p.getX() == x && p.getY()== y){
                     p.setY(y - 1);
                     p.setX(x + 1);
@@ -61,11 +61,34 @@ public class State
         }
     }
 
-    public ArrayList<Point2D> getBlackPawns() {
-        return blackPawns;
+    public ArrayList<PawnPosition> pawnsList() {
+        return pawns;
     }
 
-    public ArrayList<Point2D> getWhitePawns() {
-        return whitePawns;
+    public void findLegalMove(int width, int height)
+    {
+        for(PawnPosition p : pawns)
+        {
+            if(p.isWhite() && pawns.contains(new PawnPosition(p.getX(), p.getY() + 1, true)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+            }
+            else if(p.isWhite() && pawns.contains(new PawnPosition(p.getX(), p.getY() + 1, false)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+            }
+            else if(p.isWhite() && p.getX() != width && pawns.contains(new PawnPosition(p.getX() + 1, p.getY() + 1, false)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " kill black to the right");
+            }
+            else if(p.isWhite() && p.getX() != 1 && pawns.contains(new PawnPosition(p.getX() + 1, p.getY() - 1, false)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " kill black to the right");
+            }
+            else
+            {
+                System.out.println(p.getX() + "," + p.getY() + " can move");
+            }
+        }
     }
 }

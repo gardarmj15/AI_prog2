@@ -1,7 +1,6 @@
-import Helpers.Point2D;
+import Helpers.PawnPosition;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MyAgent implements Agent
 {
@@ -10,8 +9,7 @@ public class MyAgent implements Agent
     private boolean myTurn; // whether it is this agent's turn or not
     private int width, height; // dimensions of the board
     private State initialState;
-    ArrayList<Point2D> black;
-    ArrayList<Point2D> white;
+    ArrayList<PawnPosition> pawns;
 
     public void init(String role, int width, int height, int playclock) {
         this.role = role;
@@ -40,7 +38,7 @@ public class MyAgent implements Agent
 
             // TODO: 1. update your internal world model according to the action that was just executed
             if(x2 == x1 && y2 < y1){
-                initialState.moveForward(x1,y1);
+                initialState.moveForward(x1,y1,false);
             }
             else if(x2 < x1 && y2 == y1){
                 initialState.moveDiagonally(x1,y1, true);
@@ -50,9 +48,8 @@ public class MyAgent implements Agent
             }
 
         }
-        black = initialState.getBlackPawns();
-        white = initialState.getWhitePawns();
-        drawBoard();
+        pawns = initialState.pawnsList();
+        //drawBoard();
         // update turn (above that line it myTurn is still for the previous state)
         myTurn = !myTurn;
         if (myTurn) {
@@ -60,8 +57,9 @@ public class MyAgent implements Agent
 
             // Here we just construct a random move (that will most likely not even be possible),
             // this needs to be replaced with the actual best move.
+            initialState.findLegalMove(width, height);
             int x1,y1,x2,y2;
-            findLegalMove();
+            //findLegalMove();
             //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
         } else {
             return "noop";
@@ -75,13 +73,13 @@ public class MyAgent implements Agent
         // TODO: cleanup so that the agent is ready for the next match
     }
 
-    private void drawBoard()
+    /*private void drawBoard()
     {
         for(int y = height; y > 0; y--)
         {
             for(int x = width; x > 0; x--)
             {
-                for(Point2D pawn : black)
+                for(PawnPosition pawn : black)
                 {
                     if(x == pawn.getX() && y == pawn.getY())
                     {
@@ -89,22 +87,18 @@ public class MyAgent implements Agent
                         continue;
                     }
                 }
-                for(Point2D pawn : white)
+                for(PawnPosition pawn : white)
                 {
-                    if(x == pawn.getX() && y == pawn.getY())
-                    {
+                    if (x == pawn.getX() && y == pawn.getY()) {
                         System.out.print("O ");
                         continue;
                     }
                 }
-                System.out.print("  ");
             }
+            System.out.print("  ");
             System.out.println("");
         }
-    }
+    }*/
 
-    private void findLegalMove()
-    {
 
-    }
 }

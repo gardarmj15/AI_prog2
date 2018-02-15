@@ -1,19 +1,21 @@
 package Helpers;
 
-public class Point2D
+public class PawnPosition
 {
     private int x;
     private int y;
+    private boolean white;
 
-    public Point2D()
+    public PawnPosition()
     {
 
     }
 
-    public Point2D(int x, int y)
+    public PawnPosition(int x, int y, boolean white)
     {
         this.x = x;
         this.y = y;
+        this.white = white;
     }
 
     public void setY(int y) {
@@ -32,14 +34,18 @@ public class Point2D
         return y;
     }
 
+    public boolean isWhite() {
+        return white;
+    }
+
     @Override
     public boolean equals(Object object)
     {
         boolean isEqual= false;
 
-        if (object != null && (object instanceof Point2D))
+        if (object != null && (object instanceof PawnPosition))
         {
-            isEqual = (this.x == ((Point2D) object).x) && (this.y == ((Point2D) object).y);
+            isEqual = (this.x == ((PawnPosition) object).x) && (this.y == ((PawnPosition) object).y);
         }
 
         return isEqual;
