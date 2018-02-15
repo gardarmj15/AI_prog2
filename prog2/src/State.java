@@ -32,4 +32,15 @@ public class State
             }
         }
     }
+    void moveForward(int x, int y){
+
+    }
+    void moveDiagonally(int x, int y, Boolean right){
+        if(right){
+
+        }
+        else{
+
+        }
+    }
 }

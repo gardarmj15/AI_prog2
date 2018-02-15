@@ -19,16 +19,13 @@ public class MyAgent implements Agent
         initialState = new State();
         initialState.addToLists(width,height);
         System.out.println(this.role + " " + this.playclock + " " + myTurn + " " + this.width + " " + this.height);
-        for(int i = 0; i < 10000000; i++)
-            role = "white";
         // TODO: add your own initialization code here
     }
 
     // lastMove is null the first time nextAction gets called (in the initial state)
     // otherwise it contains the coordinates x1,y1,x2,y2 of the move that the last player did
     public String nextAction(int[] lastMove) {
-        return "NOOP";
-        /*if (lastMove != null) {
+        if (lastMove != null) {
             int x1 = lastMove[0], y1 = lastMove[1], x2 = lastMove[2], y2 = lastMove[3];
             String roleOfLastPlayer;
             if (myTurn && role.equals("white") || !myTurn && role.equals("black")) {
@@ -38,11 +35,20 @@ public class MyAgent implements Agent
             }
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
             // TODO: 1. update your internal world model according to the action that was just executed
+            if(x2 == x1 && y2 > y1){
+                initialState.moveForward(x1,y1);
+            }
+            else if(x2 > x1 && y2 == y1){
+                initialState.moveDiagonally(x1,y1, true);
+            }
+            else{
+                initialState.moveDiagonally(x1,y1, false);
+            }
 
         }
 
         // update turn (above that line it myTurn is still for the previous state)
-        myTurn = !myTurn;
+        /*myTurn = !myTurn;
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
@@ -62,6 +68,7 @@ public class MyAgent implements Agent
         } else {
             return "noop";
         }*/
+        return "";
     }
 
     // is called when the game is over or the match is aborted

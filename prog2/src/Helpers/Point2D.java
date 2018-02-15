@@ -31,4 +31,22 @@ public class Point2D
     public int getY() {
         return y;
     }
+
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean isEqual= false;
+
+        if (object != null && (object instanceof Point2D))
+        {
+            isEqual = (this.x == ((Point2D) object).x) && (this.y == ((Point2D) object).y);
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.x + this.y;
+    }
 }
