@@ -37,14 +37,12 @@ public class MyAgent implements Agent
                 roleOfLastPlayer = "black";
             }
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
-            //black = initialState.getBlackPawns();
-            //white = initialState.getWhitePawns();
-            drawBoard();
+
             // TODO: 1. update your internal world model according to the action that was just executed
-            if(x2 == x1 && y2 > y1){
+            if(x2 == x1 && y2 < y1){
                 initialState.moveForward(x1,y1);
             }
-            else if(x2 > x1 && y2 == y1){
+            else if(x2 < x1 && y2 == y1){
                 initialState.moveDiagonally(x1,y1, true);
             }
             else{
@@ -52,7 +50,9 @@ public class MyAgent implements Agent
             }
 
         }
-
+        black = initialState.getBlackPawns();
+        white = initialState.getWhitePawns();
+        drawBoard();
         // update turn (above that line it myTurn is still for the previous state)
         myTurn = !myTurn;
         if (myTurn) {

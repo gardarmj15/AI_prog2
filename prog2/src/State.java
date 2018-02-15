@@ -36,16 +36,28 @@ public class State
         System.out.println("move forward");
         for(Point2D p : blackPawns){
             if(p.getX() == x && p.getY()== y){
-                p.setY(--y);
+                p.setY(y + 1);
             }
         }
     }
     void moveDiagonally(int x, int y, Boolean right){
         if(right){
             System.out.println("move right");
+            for(Point2D p : blackPawns){
+                if(p.getX() == x && p.getY()== y){
+                    p.setY(y - 1);
+                    p.setX(x - 1);
+                }
+            }
         }
         else{
             System.out.println("move left");
+            for(Point2D p : blackPawns){
+                if(p.getX() == x && p.getY()== y){
+                    p.setY(y - 1);
+                    p.setX(x + 1);
+                }
+            }
         }
     }
 
