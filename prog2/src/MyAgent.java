@@ -1,5 +1,6 @@
 import Helpers.Point2D;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MyAgent implements Agent
@@ -9,6 +10,8 @@ public class MyAgent implements Agent
     private boolean myTurn; // whether it is this agent's turn or not
     private int width, height; // dimensions of the board
     private State initialState;
+    ArrayList<Point2D> black;
+    ArrayList<Point2D> white;
 
     public void init(String role, int width, int height, int playclock) {
         this.role = role;
@@ -34,6 +37,9 @@ public class MyAgent implements Agent
                 roleOfLastPlayer = "black";
             }
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
+            //black = initialState.getBlackPawns();
+            //white = initialState.getWhitePawns();
+            drawBoard();
             // TODO: 1. update your internal world model according to the action that was just executed
             if(x2 == x1 && y2 > y1){
                 initialState.moveForward(x1,y1);
@@ -48,32 +54,57 @@ public class MyAgent implements Agent
         }
 
         // update turn (above that line it myTurn is still for the previous state)
-        /*myTurn = !myTurn;
+        myTurn = !myTurn;
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
             // Here we just construct a random move (that will most likely not even be possible),
             // this needs to be replaced with the actual best move.
             int x1,y1,x2,y2;
-            x1 = random.nextInt(width)+1;
-            x2 = x1 + random.nextInt(3)-1;
-            if (role.equals("white")) {
-                y1 = random.nextInt(height-1);
-                y2 = y1 + 1;
-            } else {
-                y1 = random.nextInt(height-1)+2;
-                y2 = y1 - 1;
-            }
-            return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+            findLegalMove();
+            //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
         } else {
             return "noop";
-        }*/
-        return "";
+        }
+        return "noop";
     }
 
     // is called when the game is over or the match is aborted
     @Override
     public void cleanup() {
         // TODO: cleanup so that the agent is ready for the next match
+    }
+
+    private void drawBoard()
+    {
+        for(int y = height; y > 0; y--)
+        {
+            for(int x = width; x > 0; x--)
+            {
+                for(Point2D pawn : black)
+                {
+                    if(x == pawn.getX() && y == pawn.getY())
+                    {
+                        System.out.print("X ");
+                        continue;
+                    }
+                }
+                for(Point2D pawn : white)
+                {
+                    if(x == pawn.getX() && y == pawn.getY())
+                    {
+                        System.out.print("O ");
+                        continue;
+                    }
+                }
+                System.out.print("  ");
+            }
+            System.out.println("");
+        }
+    }
+
+    private void findLegalMove()
+    {
+
     }
 }
