@@ -48,4 +48,12 @@ public class State
             System.out.println("move left");
         }
     }
+
+    public ArrayList<Point2D> getBlackPawns() {
+        return blackPawns;
+    }
+
+    public ArrayList<Point2D> getWhitePawns() {
+        return whitePawns;
+    }
 }
