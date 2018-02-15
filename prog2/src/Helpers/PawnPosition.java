@@ -4,18 +4,16 @@ public class PawnPosition
 {
     private int x;
     private int y;
-    private boolean white;
 
     public PawnPosition()
     {
 
     }
 
-    public PawnPosition(int x, int y, boolean white)
+    public PawnPosition(int x, int y)
     {
         this.x = x;
         this.y = y;
-        this.white = white;
     }
 
     public void setY(int y) {
@@ -34,10 +32,6 @@ public class PawnPosition
         return y;
     }
 
-    public boolean isWhite() {
-        return white;
-    }
-
     @Override
     public boolean equals(Object object)
     {
@@ -53,6 +47,13 @@ public class PawnPosition
 
     @Override
     public int hashCode() {
-        return this.x + this.y;
+        int result = 18;
+        int c = 0;
+
+        c+= this.x;
+        c+= this.y;
+
+        result = 37 * result + c;
+        return result;
     }
 }
