@@ -33,14 +33,19 @@ public class State
         }
     }
     void moveForward(int x, int y){
-
+        System.out.println("move forward");
+        for(Point2D p : blackPawns){
+            if(p.getX() == x && p.getY()== y){
+                p.setY(--y);
+            }
+        }
     }
     void moveDiagonally(int x, int y, Boolean right){
         if(right){
-
+            System.out.println("move right");
         }
         else{
-
+            System.out.println("move left");
         }
     }
 }
