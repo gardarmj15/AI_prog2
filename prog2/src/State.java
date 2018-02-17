@@ -1,3 +1,4 @@
+import Helpers.Move;
 import Helpers.PawnPosition;
 
 import java.util.ArrayList;
@@ -8,12 +9,14 @@ public class State
     private HashSet<PawnPosition> black;
     private HashSet<PawnPosition> white;
     private HashSet<State> successorStates;
+    private ArrayList<Move> legalMoves;
 
     public State()
     {
         black = new HashSet<>();
         white = new HashSet<>();
         successorStates = new HashSet<>();
+        legalMoves = new ArrayList<>();
     }
 
     public State(HashSet<PawnPosition> black, HashSet<PawnPosition> white)
@@ -21,6 +24,7 @@ public class State
         this.black = black;
         this.white = white;
         successorStates = new HashSet<>();
+        legalMoves = new ArrayList<>();
     }
 
     public void addToLists(int w, int h)
@@ -80,7 +84,15 @@ public class State
         return black;
     }
 
-    public HashSet<State> findLegalMove(int width, int height, String role)
+    public ArrayList<Move> getLegalMoves(int width, String role) {
+        if(role.equals("white"))
+            return getWhiteLegalMoves(width);
+        else if(role.equals("black"))
+            return getBlackLegalMoves(width);
+        return null;
+    }
+
+    public HashSet<State> createLegalStates(int width, int height, String role)
     {
         if(role.equals("white"))
         {
@@ -189,5 +201,86 @@ public class State
             }
         }
         return successorStates;
+    }
+
+    private ArrayList<Move> getWhiteLegalMoves(int width)
+    {
+        for(PawnPosition p : white)
+        {
+            if(white.contains(new PawnPosition(p.getX(), p.getY() + 1)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+            }
+            else if(black.contains(new PawnPosition(p.getX(), p.getY() + 1)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+            }
+            else if(p.getX() != width && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() + 1, p.getY() + 1)));
+            }
+            else if(p.getX() != 1 && black.contains(new PawnPosition(p.getX() - 1, p.getY() + 1)))
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() - 1, p.getY() + 1)));
+            }
+            else
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX(), p.getY() + 1)));
+            }
+        }
+        return legalMoves;
+    }
+
+    private ArrayList<Move> getBlackLegalMoves(int width)
+    {
+        for(PawnPosition p : black)
+        {
+            if(black.contains(new PawnPosition(p.getX(), p.getY() - 1)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+            }
+            else if(white.contains(new PawnPosition(p.getX(), p.getY() - 1)))
+            {
+                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+            }
+            else if(p.getX() != width && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() + 1, p.getY() - 1)));
+            }
+            else if(p.getX() != 1 && white.contains(new PawnPosition(p.getX() - 1, p.getY() - 1)))
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() - 1, p.getY() - 1)));
+            }
+            else
+            {
+                legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX(), p.getY() - 1)));
+            }
+        }
+        return legalMoves;
+    }
+
+    public State getStateByAction(Move move)
+    {
+        HashSet<PawnPosition> newWhite = getWhiteCopy();
+        HashSet<PawnPosition> newBlack = getBlackCopy();
+        if(black.contains(move.getFrom()))
+        {
+            newBlack.remove(move.getFrom());
+            newBlack.add(move.getTo());
+            if(move.getFrom().getX() != move.getTo().getX())
+            {
+                newWhite.remove(move.getTo());
+            }
+        }
+        else if(white.contains(move.getFrom()))
+        {
+            newWhite.remove(move.getFrom());
+            newWhite.add(move.getTo());
+            if(move.getFrom().getX() != move.getTo().getX())
+            {
+                newBlack.remove(move.getTo());
+            }
+        }
+        return new State(newBlack, newWhite);
     }
 }
