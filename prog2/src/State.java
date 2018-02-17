@@ -1,3 +1,4 @@
+import Helpers.Environment;
 import Helpers.Move;
 import Helpers.PawnPosition;
 
@@ -10,21 +11,30 @@ public class State
     private HashSet<PawnPosition> white;
     private HashSet<State> successorStates;
     private ArrayList<Move> legalMoves;
+    private Environment env;
+    private String currentPlayer;
 
-    public State()
+    public State(Environment env)
     {
+        currentPlayer = "white";
         black = new HashSet<>();
         white = new HashSet<>();
         successorStates = new HashSet<>();
         legalMoves = new ArrayList<>();
+        this.env = env;
     }
 
-    public State(HashSet<PawnPosition> black, HashSet<PawnPosition> white)
+    public State(HashSet<PawnPosition> black, HashSet<PawnPosition> white, Environment env, String currentPlayer)
     {
+        if(currentPlayer.equals("white"))
+            this.currentPlayer = "black";
+        else
+            this.currentPlayer = "white";
         this.black = black;
         this.white = white;
         successorStates = new HashSet<>();
         legalMoves = new ArrayList<>();
+        this.env = env;
     }
 
     public void addToLists(int w, int h)
@@ -84,23 +94,23 @@ public class State
         return black;
     }
 
-    public ArrayList<Move> getLegalMoves(int width, String role) {
+    public ArrayList<Move> getLegalMoves(String role) {
         if(role.equals("white"))
-            return getWhiteLegalMoves(width);
+            return getWhiteLegalMoves();
         else if(role.equals("black"))
-            return getBlackLegalMoves(width);
+            return getBlackLegalMoves();
         return null;
     }
 
-    public HashSet<State> createLegalStates(int width, int height, String role)
+    public HashSet<State> createLegalStates(String role)
     {
         if(role.equals("white"))
         {
-            return getWhiteMoves(width);
+            return getWhiteMoves();
         }
         else if(role.equals("black"))
         {
-            return getBlackMoves(width);
+            return getBlackMoves();
         }
         return null;
     }
@@ -119,7 +129,7 @@ public class State
         return newBlack;
     }
 
-    private HashSet<State> getWhiteMoves(int width)
+    private HashSet<State> getWhiteMoves()
     {
         for(PawnPosition p : white)
         {
@@ -131,14 +141,14 @@ public class State
             {
                 System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
-            else if(p.getX() != width && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
+            else if(p.getX() != env.getWidth() && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
             {
                 HashSet<PawnPosition> newWhite = getWhiteCopy();
                 HashSet<PawnPosition> newBlack = getBlackCopy();
                 newWhite.remove(p);
                 newWhite.add(new PawnPosition(p.getX() + 1, p.getY() + 1));
                 newBlack.remove(new PawnPosition(p.getX() + 1, p.getY() + 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite, env, currentPlayer));
             }
             else if(p.getX() != 1 && black.contains(new PawnPosition(p.getX() - 1, p.getY() + 1)))
             {
@@ -147,7 +157,7 @@ public class State
                 newWhite.remove(p);
                 newWhite.add(new PawnPosition(p.getX() - 1, p.getY() + 1));
                 newBlack.remove(new PawnPosition(p.getX() - 1, p.getY() + 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite, env, currentPlayer));
             }
             else
             {
@@ -155,13 +165,13 @@ public class State
                 HashSet<PawnPosition> newBlack = getBlackCopy();
                 newWhite.remove(p);
                 newWhite.add(new PawnPosition(p.getX(), p.getY() + 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite, env, currentPlayer));
             }
         }
         return successorStates;
     }
 
-    private HashSet<State> getBlackMoves(int width)
+    private HashSet<State> getBlackMoves()
     {
         for(PawnPosition p : black)
         {
@@ -173,14 +183,14 @@ public class State
             {
                 System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
-            else if(p.getX() != width && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
+            else if(p.getX() != env.getWidth() && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
             {
                 HashSet<PawnPosition> newWhite = getWhiteCopy();
                 HashSet<PawnPosition> newBlack = getBlackCopy();
                 newBlack.remove(p);
                 newBlack.add(new PawnPosition(p.getX() + 1, p.getY() - 1));
                 newWhite.remove(new PawnPosition(p.getX() + 1, p.getY() - 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite,env, currentPlayer));
             }
             else if(p.getX() != 1 && white.contains(new PawnPosition(p.getX() - 1, p.getY() - 1)))
             {
@@ -189,7 +199,7 @@ public class State
                 newBlack.remove(p);
                 newBlack.add(new PawnPosition(p.getX() - 1, p.getY() - 1));
                 newWhite.remove(new PawnPosition(p.getX() - 1, p.getY() - 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite,env, currentPlayer));
             }
             else
             {
@@ -197,13 +207,13 @@ public class State
                 HashSet<PawnPosition> newBlack = getBlackCopy();
                 newBlack.remove(p);
                 newBlack.add(new PawnPosition(p.getX(), p.getY() - 1));
-                successorStates.add(new State(newBlack, newWhite));
+                successorStates.add(new State(newBlack, newWhite,env, currentPlayer));
             }
         }
         return successorStates;
     }
 
-    private ArrayList<Move> getWhiteLegalMoves(int width)
+    private ArrayList<Move> getWhiteLegalMoves()
     {
         for(PawnPosition p : white)
         {
@@ -215,7 +225,7 @@ public class State
             {
                 System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
-            else if(p.getX() != width && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
+            else if(p.getX() != env.getWidth() && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
             {
                 legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() + 1, p.getY() + 1)));
             }
@@ -231,7 +241,7 @@ public class State
         return legalMoves;
     }
 
-    private ArrayList<Move> getBlackLegalMoves(int width)
+    private ArrayList<Move> getBlackLegalMoves()
     {
         for(PawnPosition p : black)
         {
@@ -243,7 +253,7 @@ public class State
             {
                 System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
-            else if(p.getX() != width && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
+            else if(p.getX() != env.getWidth() && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
             {
                 legalMoves.add(new Move(new PawnPosition(p.getX(), p.getY()), new PawnPosition(p.getX() + 1, p.getY() - 1)));
             }
@@ -281,6 +291,72 @@ public class State
                 newBlack.remove(move.getTo());
             }
         }
-        return new State(newBlack, newWhite);
+        return new State(newBlack, newWhite, env, currentPlayer);
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int evaluateScore(String role)
+    {
+        if(role.equals("white"))
+        {
+            if(checkForDraw(role))
+                return 0;
+            else if(checkForWin(role))
+                return 100;
+            else if(checkForWin("black"))
+                return -100;
+            else
+                return 0;
+        }
+        else if(role.equals("black"))
+        {
+            if(checkForDraw(role))
+                return 0;
+            else if(checkForWin(role))
+                return 100;
+            else if(checkForWin("white"))
+                return -100;
+            else
+                return 0;
+        }
+        return 0;
+    }
+
+    private boolean checkForWin(String role)
+    {
+        if(getLegalMoves(role).isEmpty())
+        {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean checkForDraw(String role)
+    {
+        if(getLegalMoves(role).isEmpty())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isGameOver(String role) {
+        if (checkForDraw(role)) {
+            return true;
+        }
+        for (PawnPosition p : white)
+        {
+            if(p.getY() == env.getHeight())
+                return true;
+        }
+        for (PawnPosition p : black)
+        {
+            if(p.getY() == env.getHeight())
+                return true;
+        }
+        return false;
     }
 }

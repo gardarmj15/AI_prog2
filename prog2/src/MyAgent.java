@@ -1,3 +1,4 @@
+import Helpers.Environment;
 import Helpers.Move;
 import Helpers.PawnPosition;
 import Helpers.TimeIsUpException;
@@ -10,7 +11,6 @@ public class MyAgent implements Agent
     private String role; // the name of this agent's role (white or black)
     private int playclock; // this is how much time (in seconds) we have before nextAction needs to return a move
     private boolean myTurn; // whether it is this agent's turn or not
-    private int width, height; // dimensions of the board
     private State initialState;
     HashSet<State> possibleMoves;
 
@@ -18,11 +18,9 @@ public class MyAgent implements Agent
         this.role = role;
         this.playclock = playclock;
         myTurn = !role.equals("white");
-        this.width = width;
-        this.height = height;
-        initialState = new State();
+        Environment env = new Environment(height, width);
+        initialState = new State(env);
         initialState.addToLists(width,height);
-        System.out.println(this.role + " " + this.playclock + " " + myTurn + " " + this.width + " " + this.height);
         Search(initialState);
     }
 
@@ -104,7 +102,7 @@ public class MyAgent implements Agent
         int beta = 100;
         Move best = null;
         ArrayList<Move> legalMoves;
-        legalMoves = state.getLegalMoves(width, role);
+        legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
         {
             int value = -ChildSearch(state.getStateByAction(m), -alpha, -beta, depth - 1);
@@ -120,9 +118,9 @@ public class MyAgent implements Agent
         {
             throw new TimeIsUpException("mamma'in");
         }
-        if(depth == 0) return 1;
+        if(depth == 0 || state.isGameOver(state.getCurrentPlayer())) return state.evaluateScore(state.getCurrentPlayer());
         ArrayList<Move> legalMoves;
-        legalMoves = state.getLegalMoves(width, role);
+        legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
         {
             int value = -ChildSearch(state.getStateByAction(m), -alpha, -beta, depth - 1);
