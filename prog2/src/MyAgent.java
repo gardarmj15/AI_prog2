@@ -118,7 +118,7 @@ public class MyAgent implements Agent
         {
             throw new TimeIsUpException("mamma'in");
         }
-        if(depth == 0 || state.isGameOver(state.getCurrentPlayer())) return state.evaluateScore(state.getCurrentPlayer());
+        if(depth <= 0 || state.isGameOver(state.getCurrentPlayer())) return state.evaluateScore(state.getCurrentPlayer());
         ArrayList<Move> legalMoves;
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
