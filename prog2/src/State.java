@@ -125,7 +125,7 @@ public class State
     private HashSet<PawnPosition> getBlackCopy()
     {
         HashSet<PawnPosition> newBlack = new HashSet<>();
-        newBlack.addAll(white);
+        newBlack.addAll(black);
         return newBlack;
     }
 
@@ -354,7 +354,7 @@ public class State
         }
         for (PawnPosition p : black)
         {
-            if(p.getY() == env.getHeight())
+            if(p.getY() == 1)
                 return true;
         }
         return false;
