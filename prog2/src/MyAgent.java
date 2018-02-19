@@ -25,7 +25,7 @@ public class MyAgent implements Agent
         myTurn = !role.equals("white");
         Environment env = new Environment(height, width);
         initialState = new State(env);
-        initialState.addToLists(width,height);
+        initialState.addToLists();
     }
 
     // lastMove is null the first time nextAction gets called (in the initial state)
@@ -91,8 +91,8 @@ public class MyAgent implements Agent
         {
             throw new TimeIsUpException("mamma'in");
         }
-        int alpha = -1000;
-        int beta = 1000;
+        int alpha = -100000;
+        int beta = 100000;
         Move best = null;
         ArrayList<Move> legalMoves;
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());

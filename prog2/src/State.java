@@ -189,22 +189,22 @@ public class State
             if(checkForDraw(role))
                 score =  0;
             else if(checkForWin(role))
-                score =  1000;
+                score =  100000;
             else if(checkForWin("black"))
-                score = -1000;
+                score = -100000;
             else
-                getTerminalStateScore(role);
+                getNonTerminalStateScore(role);
         }
         else if(role.equals("black"))
         {
             if(checkForDraw(role))
                 score = 0;
             else if(checkForWin(role))
-                score = 1000;
+                score = 100000;
             else if(checkForWin("white"))
-                score = -1000;
+                score = -100000;
             else
-                getTerminalStateScore(role);
+                getNonTerminalStateScore(role);
         }
     }
 
@@ -213,15 +213,19 @@ public class State
         if(role.equals("white"))
         {
             for(PawnPosition p : white) {
-                if (p.getY() == env.getHeight())
+                if (p.getY() == env.getHeight()) {
+                    score = 100000;
                     return true;
+                }
             }
         }
         else if(role.equals("black"))
         {
             for(PawnPosition p : black) {
-                if(p.getY() == 1)
+                if(p.getY() == 1) {
+                    score = 100000;
                     return true;
+                }
             }
         }
         return false;
@@ -237,44 +241,13 @@ public class State
     }
 
     public boolean isGameOver(String role) {
+        evaluateScore(role);
+        if(checkForWin(role))
+            return true;
         if (checkForDraw(role)) {
             return true;
         }
-        for (PawnPosition p : white)
-        {
-            if(p.getY() == env.getHeight())
-                return true;
-        }
-        for (PawnPosition p : black)
-        {
-            if(p.getY() == 1)
-                return true;
-        }
         return false;
-    }
-
-    private void getTerminalStateScore(String role)
-    {
-        int bestWhite = 0;
-        int bestBlack = 0;
-        for(PawnPosition p : black)
-        {
-            if(bestBlack == 0)
-                bestBlack = p.getY();
-            else if (bestBlack > p.getY())
-                bestBlack = p.getY();
-        }
-        for(PawnPosition p : white)
-        {
-            if (bestWhite == 0)
-                bestWhite = p.getY();
-            else if(bestWhite < p.getY())
-                bestWhite = p.getY();
-        }
-        if(role.equals("white"))
-            score = (env.getHeight() - bestWhite) - (bestBlack - 1) + ((10 * white.size()) - (10 * black.size()));
-        if(role.equals("black"))
-            score = (bestBlack - 1) - (env.getHeight() - bestWhite) + ((10 * black.size()) - (10 * white.size()));
     }
 
     public int getScore() {
@@ -292,5 +265,64 @@ public class State
             System.out.println();
         }
         System.out.println("\n");
+    }
+
+    private void getNonTerminalStateScore(String role)
+    {
+        score = furthestPlayer(role);
+        score += sizeDifference(role);
+        score += canWin(role);
+        System.out.println(score);
+    }
+
+    private int furthestPlayer(String role)
+    {
+        int bestWhite = 0;
+        int bestBlack = 0;
+        for(PawnPosition p : black)
+        {
+            bestBlack += (env.getHeight() - p.getY() + 1) * 5;
+        }
+        for(PawnPosition p : white)
+        {
+            bestWhite += p.getY() * 5;
+        }
+        if(role.equals("white"))
+        {
+            return bestWhite - bestBlack;
+        }
+        else if(role.equals("black"))
+        {
+            return bestBlack - bestWhite;
+        }
+        return 0;
+    }
+
+    private int sizeDifference(String role)
+    {
+        if(role.equals("white"))
+            return (white.size() - black.size()) * 5;
+        if(role.equals("black"))
+            return (black.size() - white.size()) * 5;
+        return 0;
+    }
+
+    private int canWin(String role)
+    {
+        for (PawnPosition p : white)
+        {
+            if (p.getY() == 4 && role.equals("white"))
+                return 2000;
+            if( p.getY() == 4 && role.equals("black"))
+                return -2000;
+        }
+        for (PawnPosition p : black)
+        {
+            if (p.getY() == 4 && role.equals("black"))
+                return 2000;
+            if( p.getY() == 4 && role.equals("white"))
+                return -2000;
+        }
+        return 0;
     }
 }
