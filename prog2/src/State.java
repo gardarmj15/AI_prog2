@@ -39,18 +39,18 @@ public class State
         evaluateScore(currentPlayer);
     }
 
-    public void addToLists(int w, int h)
+    public void addToLists()
     {
-        for(int x = 1; x <= w; x++)
+        for(int x = 1; x <= env.getWidth(); x++)
         {
             for(int y = 1; y <= 2; y++)
             {
                 white.add(new PawnPosition(x,y));
             }
         }
-        for(int x = 1; x <= w; x++)
+        for(int x = 1; x <= env.getWidth(); x++)
         {
-            for(int y = h; y > w; y--)
+            for(int y = env.getHeight(); y > env.getHeight() - 2; y--)
             {
                 black.add(new PawnPosition(x,y));
             }
@@ -210,9 +210,19 @@ public class State
 
     private boolean checkForWin(String role)
     {
-        if(getLegalMoves(role).isEmpty())
+        if(role.equals("white"))
         {
-            return false;
+            for(PawnPosition p : white) {
+                if (p.getY() == env.getHeight())
+                    return true;
+            }
+        }
+        else if(role.equals("black"))
+        {
+            for(PawnPosition p : black) {
+                if(p.getY() == 1)
+                    return true;
+            }
         }
         return false;
     }
