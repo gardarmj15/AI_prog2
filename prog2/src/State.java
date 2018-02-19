@@ -56,15 +56,21 @@ public class State
             }
         }
     }
-    void moveForward(int x, int y){
-        System.out.println("move forward");
-        for(PawnPosition p : white){
-            if(p.getX() == x && p.getY()== y){
-                p = new PawnPosition(x, y + 1);
-            }
-            else if(p.getX() == x && p.getY()== y){
-                p = new PawnPosition(x, y + 1);
-            }
+    void move(int x1, int x2, int y1, int y2, String role)
+    {
+        if(role.equals("white"))
+        {
+            white.remove(new PawnPosition(x1, y1));
+            white.add(new PawnPosition(x2, y2));
+            if(black.contains(new PawnPosition(x2, y2)))
+                black.remove(new PawnPosition(x2, y2));
+        }
+        if(role.equals("black"))
+        {
+            black.remove(new PawnPosition(x1, y1));
+            black.add(new PawnPosition(x2, y2));
+            if(white.contains(new PawnPosition(x2,y2)))
+                white.remove(new PawnPosition(x2,y2));
         }
     }
     void moveDiagonally(int x, int y, Boolean right){

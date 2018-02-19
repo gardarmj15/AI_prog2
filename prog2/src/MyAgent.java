@@ -42,15 +42,7 @@ public class MyAgent implements Agent
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
 
             // TODO: 1. update your internal world model according to the action that was just executed
-            if(x2 == x1 && y2 < y1){
-                //initialState.moveForward(x1,y1,false);
-            }
-            else if(x2 < x1 && y2 == y1){
-                //initialState.moveDiagonally(x1,y1, true);
-            }
-            else{
-                //initialState.moveDiagonally(x1,y1, false);
-            }
+            currentState.move(x1,x2,y1,y2, roleOfLastPlayer);
         }
         else {
             currentState = initialState;
@@ -61,6 +53,7 @@ public class MyAgent implements Agent
             // TODO: 2. run alpha-beta search to determine the best move
 
             Move bestMove = Search(currentState);
+            currentState.move(bestMove.getFrom().getX(), bestMove.getTo().getX(), bestMove.getFrom().getY(), bestMove.getTo().getY(), role);
             System.out.println("M");
             System.out.println(bestMove.getFrom().getX() + ", " + bestMove.getFrom().getY());
             System.out.println(bestMove.getTo().getX() + ", " + bestMove.getTo().getY());
