@@ -3,6 +3,7 @@ import Helpers.Move;
 import Helpers.PawnPosition;
 import Helpers.TimeIsUpException;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -12,16 +13,19 @@ public class MyAgent implements Agent
     private int playclock; // this is how much time (in seconds) we have before nextAction needs to return a move
     private boolean myTurn; // whether it is this agent's turn or not
     private State initialState;
+    private State currentState;
     HashSet<State> possibleMoves;
+    private long timeNow;
+    private long maxTime;
 
     public void init(String role, int width, int height, int playclock) {
         this.role = role;
         this.playclock = playclock;
+        maxTime = (playclock * 1000) - 50;
         myTurn = !role.equals("white");
         Environment env = new Environment(height, width);
         initialState = new State(env);
         initialState.addToLists(width,height);
-        Search(initialState);
     }
 
     // lastMove is null the first time nextAction gets called (in the initial state)
@@ -47,27 +51,24 @@ public class MyAgent implements Agent
             else{
                 //initialState.moveDiagonally(x1,y1, false);
             }
-
         }
-        //possibleMoves = initialState.findLegalMove(width, height, role);
-        System.out.print("Ello");
-        //whitePawns = initialState.getWhitePawns();
-        //blackPawns = initialState.getBlackPawns();
+        else {
+            currentState = initialState;
+        }
         // update turn (above that line it myTurn is still for the previous state)
         myTurn = !myTurn;
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
-            // Here we just construct a random move (that will most likely not even be possible),
-            // this needs to be replaced with the actual best move.
-            //initialState.findLegalMove(width, height);
+            Move bestMove = Search(currentState);
+            System.out.println("M");
+            System.out.println(bestMove.getFrom().getX() + ", " + bestMove.getFrom().getY());
+            System.out.println(bestMove.getTo().getX() + ", " + bestMove.getTo().getY());
             int x1,y1,x2,y2;
-            //findLegalMove();
-            //return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+            return "(move " + bestMove.getFrom().getX() + " " + bestMove.getFrom().getY() + " " + bestMove.getTo().getX() + " " + bestMove.getTo().getY() + ")";
         } else {
             return "noop";
         }
-        return "noop";
     }
 
     // is called when the game is over or the match is aborted
@@ -78,10 +79,11 @@ public class MyAgent implements Agent
 
     private Move Search(State state)
     {
+        timeNow = System.currentTimeMillis();
         Move best = null;
         try
         {
-            for(int depth = 0;;depth++)
+            for(int depth = 2;;depth++)
             {
                 best = RootSearch(state, depth);
             }
@@ -94,7 +96,7 @@ public class MyAgent implements Agent
 
     private Move RootSearch(State state, int depth) throws TimeIsUpException
     {
-        if("hello".equals("yellow"))
+        if(timeNow + maxTime < System.currentTimeMillis())
         {
             throw new TimeIsUpException("mamma'in");
         }
@@ -105,7 +107,7 @@ public class MyAgent implements Agent
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
         {
-            int value = -ChildSearch(state.getStateByAction(m), -alpha, -beta, depth - 1);
+            int value = -ChildSearch(state.getStateByAction(m), -beta, -alpha, depth - 1);
             if(value > alpha) best = m;
             if(alpha >= beta) break;
         }
@@ -114,16 +116,16 @@ public class MyAgent implements Agent
 
     private int ChildSearch(State state, int alpha, int beta, int depth) throws TimeIsUpException
     {
-        if("hello".equals("yellow"))
+        if(timeNow + maxTime < System.currentTimeMillis())
         {
             throw new TimeIsUpException("mamma'in");
         }
-        if(depth <= 0 || state.isGameOver(state.getCurrentPlayer())) return state.evaluateScore(state.getCurrentPlayer());
+        if(depth <= 0 || state.isGameOver(state.getCurrentPlayer())) return state.getScore();
         ArrayList<Move> legalMoves;
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
         {
-            int value = -ChildSearch(state.getStateByAction(m), -alpha, -beta, depth - 1);
+            int value = -ChildSearch(state.getStateByAction(m), -beta, -alpha, depth - 1);
             if(value > alpha) alpha = value;
             if(alpha >= beta) break;
         }

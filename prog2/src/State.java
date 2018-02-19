@@ -13,6 +13,7 @@ public class State
     private ArrayList<Move> legalMoves;
     private Environment env;
     private String currentPlayer;
+    private int score;
 
     public State(Environment env)
     {
@@ -35,6 +36,7 @@ public class State
         successorStates = new HashSet<>();
         legalMoves = new ArrayList<>();
         this.env = env;
+        evaluateScore(currentPlayer);
     }
 
     public void addToLists(int w, int h)
@@ -135,11 +137,11 @@ public class State
         {
             if(white.contains(new PawnPosition(p.getX(), p.getY() + 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
             else if(black.contains(new PawnPosition(p.getX(), p.getY() + 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
             else if(p.getX() != env.getWidth() && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
             {
@@ -177,11 +179,11 @@ public class State
         {
             if(black.contains(new PawnPosition(p.getX(), p.getY() - 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
             else if(white.contains(new PawnPosition(p.getX(), p.getY() - 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
             else if(p.getX() != env.getWidth() && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
             {
@@ -219,11 +221,11 @@ public class State
         {
             if(white.contains(new PawnPosition(p.getX(), p.getY() + 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
             else if(black.contains(new PawnPosition(p.getX(), p.getY() + 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
             else if(p.getX() != env.getWidth() && black.contains(new PawnPosition(p.getX() + 1, p.getY() + 1)))
             {
@@ -247,11 +249,11 @@ public class State
         {
             if(black.contains(new PawnPosition(p.getX(), p.getY() - 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move black in front");
             }
             else if(white.contains(new PawnPosition(p.getX(), p.getY() - 1)))
             {
-                System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
+                //System.out.println(p.getX() + "," + p.getY() + " cannot move white in front");
             }
             else if(p.getX() != env.getWidth() && white.contains(new PawnPosition(p.getX() + 1, p.getY() - 1)))
             {
@@ -298,31 +300,30 @@ public class State
         return currentPlayer;
     }
 
-    public int evaluateScore(String role)
+    public void evaluateScore(String role)
     {
         if(role.equals("white"))
         {
             if(checkForDraw(role))
-                return 0;
+                score =  0;
             else if(checkForWin(role))
-                return 100;
+                score =  100;
             else if(checkForWin("black"))
-                return -100;
+                score = -100;
             else
-                return 0;
+                getTerminalStateScore(role);
         }
         else if(role.equals("black"))
         {
             if(checkForDraw(role))
-                return 0;
+                score = 0;
             else if(checkForWin(role))
-                return 100;
+                score = 100;
             else if(checkForWin("white"))
-                return -100;
+                score = -100;
             else
-                return 0;
+                getTerminalStateScore(role);
         }
-        return 0;
     }
 
     private boolean checkForWin(String role)
@@ -358,5 +359,30 @@ public class State
                 return true;
         }
         return false;
+    }
+
+    private void getTerminalStateScore(String role)
+    {
+        int bestWhite = 0;
+        int bestBlack = 0;
+        for(PawnPosition p : black)
+        {
+            if(bestBlack == 0)
+                bestBlack = p.getY();
+            else if (bestBlack > p.getY())
+                bestBlack = p.getY();
+        }
+        for(PawnPosition p : white)
+        {
+            if (bestWhite == 0)
+                bestWhite = p.getY();
+            else if(bestWhite < p.getY())
+                bestWhite = p.getY();
+        }
+        score = (bestBlack - 1) - (env.getHeight() - bestWhite);
+    }
+
+    public int getScore() {
+        return score;
     }
 }
