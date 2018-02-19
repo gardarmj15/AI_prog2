@@ -43,9 +43,11 @@ public class MyAgent implements Agent
 
             // TODO: 1. update your internal world model according to the action that was just executed
             currentState.move(x1,x2,y1,y2, roleOfLastPlayer);
+            currentState.print();
         }
         else {
             currentState = initialState;
+            currentState.print();
         }
         // update turn (above that line it myTurn is still for the previous state)
         myTurn = !myTurn;
@@ -54,10 +56,6 @@ public class MyAgent implements Agent
 
             Move bestMove = Search(currentState);
             currentState.move(bestMove.getFrom().getX(), bestMove.getTo().getX(), bestMove.getFrom().getY(), bestMove.getTo().getY(), role);
-            System.out.println("M");
-            System.out.println(bestMove.getFrom().getX() + ", " + bestMove.getFrom().getY());
-            System.out.println(bestMove.getTo().getX() + ", " + bestMove.getTo().getY());
-            int x1,y1,x2,y2;
             return "(move " + bestMove.getFrom().getX() + " " + bestMove.getFrom().getY() + " " + bestMove.getTo().getX() + " " + bestMove.getTo().getY() + ")";
         } else {
             return "noop";
@@ -93,8 +91,8 @@ public class MyAgent implements Agent
         {
             throw new TimeIsUpException("mamma'in");
         }
-        int alpha = -100;
-        int beta = 100;
+        int alpha = -1000;
+        int beta = 1000;
         Move best = null;
         ArrayList<Move> legalMoves;
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());
@@ -102,7 +100,7 @@ public class MyAgent implements Agent
         {
             int value = -ChildSearch(state.getStateByAction(m), -beta, -alpha, depth - 1);
             if(value > alpha) best = m;
-            if(alpha >= beta) break;
+            if(value >= beta) break;
         }
         return best;
     }
@@ -113,7 +111,8 @@ public class MyAgent implements Agent
         {
             throw new TimeIsUpException("mamma'in");
         }
-        if(depth <= 0 || state.isGameOver(state.getCurrentPlayer())) return state.getScore();
+        if(depth <= 0 || state.isGameOver(state.getCurrentPlayer()))
+            return state.getScore();
         ArrayList<Move> legalMoves;
         legalMoves = state.getLegalMoves(state.getCurrentPlayer());
         for(Move m : legalMoves)
