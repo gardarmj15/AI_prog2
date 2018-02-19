@@ -271,7 +271,7 @@ public class State
     {
         score = furthestPlayer(role);
         score += sizeDifference(role);
-        score += canWin(role);
+        //score += canWin(role);
     }
 
     private int furthestPlayer(String role)
@@ -300,9 +300,9 @@ public class State
     private int sizeDifference(String role)
     {
         if(role.equals("white"))
-            return (white.size() - black.size()) * 5;
+            return (white.size() - black.size()) * 1000;
         if(role.equals("black"))
-            return (black.size() - white.size()) * 5;
+            return (black.size() - white.size()) * 1000;
         return 0;
     }
 
@@ -317,9 +317,9 @@ public class State
         }
         for (PawnPosition p : black)
         {
-            if (p.getY() == 1 && role.equals("black"))
+            if (p.getY() == 2 && role.equals("black"))
                 return 2000;
-            if( p.getY() == 1 && role.equals("white"))
+            if( p.getY() == 2 && role.equals("white"))
                 return -10000;
         }
         return 0;
