@@ -99,7 +99,10 @@ public class MyAgent implements Agent
         for(Move m : legalMoves)
         {
             int value = -ChildSearch(state.getStateByAction(m), -beta, -alpha, depth - 1);
-            if(value > alpha) best = m;
+            if(value > alpha){
+                alpha = value;
+                best = m;
+            }
             if(value >= beta) break;
         }
         return best;
